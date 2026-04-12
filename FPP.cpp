@@ -8,4 +8,6 @@ abcdefg
 
 int main() {
 你好
+meishiasdada
+
 }
