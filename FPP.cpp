@@ -17,108 +17,155 @@ void welcome_message() {
 	cout << "*************************************************************************\n\n";
 }
 
-void PrintMainMenu() {
-	cout << "***FFP Main Menu ***" << endl;
-	cout << "[1] Load Starting Data" << endl;
-	cout << "[2] Show All Member Accounts" << endl;
-	cout << "[3] Open or Close Member Account" << endl;
-	cout << "[4] Member Account Operations" << endl;
-	cout << "[5] Generate Daily Statement" << endl;
-	cout << "[6] Credits and Exit" << endl;
-	cout << "********************************" << endl;
-	cout << "Option (1 - 6) : ";
-}
-
 class Member {
 private:
-	string memberNumber;
-	string memberTier;
-	string passportNumber;
-	int MRZ;
-	string memberName;
-	int MPB;   
+    string memberNumber;
+    string memberTier;
+    string passportNumber;
+    int MRZ;
+    string memberName;
+    int MPB;
 
 public:
-	
-	Member() {
-		memberNumber = "";
-		memberTier = "";
-		passportNumber = "";
-		MRZ = 0;
-		memberName = "";
-		MPB = 0;
-	}
+    Member() : MRZ(0), MPB(0) {}
 
-	void setMemberNumber(string number){memberNumber = number; }
-	void setMemberTier(string tier) { memberTier = tier; }
-	void setPassportNumber(string passport) { passportNumber = passport; }
-	void setMRZ(int mrz) { MRZ = mrz; }
-	void setMemberName(string name) { memberName = name; }
-	void setMPM(int millageP) { MPB = millageP; }
-	
+    // Setters
+    void setMemberNumber(string number) { memberNumber = number; }
+    void setMemberTier(string tier) { memberTier = tier; }
+    void setPassportNumber(string passport) { passportNumber = passport; }
+    void setMRZ(int mrz) { MRZ = mrz; }
+    void setMemberName(string name) { memberName = name; }
+    void setMPM(int mpb) { MPB = mpb; }
+
+ 
 };
 
-class Flight {
-private:
+// Function to load starting data
+vector<Member> loadMembers() {
+    vector<Member> members;
 
-public:
+    Member m1;
+    m1.setMemberNumber("202456734");
+    m1.setMemberTier("Gold");
+    m1.setPassportNumber("A56678990");
+    m1.setMRZ(4);
+    m1.setMemberName("WONG Claire");
+    m1.setMPM(45000);
+    members.push_back(m1);
 
+    Member m2;
+    m2.setMemberNumber("203233890");
+    m2.setMemberTier("Green");
+    m2.setPassportNumber("C78678908");
+    m2.setMRZ(5);
+    m2.setMemberName("MA Kathy");
+    m2.setMPM(10000);
+    members.push_back(m2);
 
-};
+    Member m3;
+    m3.setMemberNumber("20067856");
+    m3.setMemberTier("Silver");
+    m3.setPassportNumber("E38578900");
+    m3.setMRZ(1);
+    m3.setMemberName("CHAN Peter");
+    m3.setMPM(53200);
+    members.push_back(m3);
+
+    Member m4;
+    m4.setMemberNumber("202211843");
+    m4.setMemberTier("Gold");
+    m4.setPassportNumber("E38900708");
+    m4.setMRZ(7);
+    m4.setMemberName("CHEUNG Alice");
+    m4.setMPM(30000);
+    members.push_back(m4);
+
+    cout << "\nStarting data loaded successfully!\n";
+    return members;
+}
+
+// Validate system date input
+string setSystemDate() {
+    string date;
+    int invalidCount = 0;
+
+    cout << "\n*** Set System Date for updating Mileage Points ***\n";
+
+    while (true) {
+        cout << "Please enter system date (DD-MM-YYYY): ";
+        cin >> date;
+
+        if (date.size() == 10 && date[2] == '-' && date[5] == '-') {
+            string day = date.substr(0, 2);
+            string month = date.substr(3, 2);
+            string year = date.substr(6, 4);
+
+            int d = stoi(day);
+            int m = stoi(month);
+            int y = stoi(year);
+
+            if (y == 2025 && d >= 1 && d <= 31 && m >= 1 && m <= 12) {
+                cout << "System date set successfully: " << date << "\n";
+                return date;
+            }
+        }
+
+        invalidCount++;
+        cout << "Invalid date format or out of range.\n";
+
+        if (invalidCount >= 3) {
+            cout << "Too many invalid attempts. Default date set to 30-06-2025.\n";
+            return "30-06-2025";
+        }
+    }
+}
+
+void printMainMenu() {
+    cout << "*** FFP Main Menu ***\n";
+    cout << "[1] Load Starting Data\n";
+    cout << "[2] Show All Member Accounts\n";
+    cout << "[3] Open or Close Member Account\n";
+    cout << "[4] Member Account Operations\n";
+    cout << "[5] Generate Daily Statement\n";
+    cout << "[6] Credits and Exit\n";
+    cout << "*******************************\n";
+    cout << "Option (1 - 6): ";
+}
 
 int main() {
-	welcome_message();
-	PrintMainMenu();
-	int Option;
-	cin >> Option;
+    vector<Member> members;
+    bool dataLoaded = false;
+    string systemDate;
 
-	switch (Option) {
-	case 1:
-	{
-		Member m1, m2, m3, m4;
-		string date;
+    welcome_message();
 
-		m1.setMemberNumber("202456734");
-		m1.setMemberTier("Gold");
-		m1.setPassportNumber("A56677890");
-		m1.setMRZ(4);
-		m1.setMemberName("WONG Claire");
-		m1.setMPM(45000);
+    int option;
+    do {
+        printMainMenu();
+        cin >> option;
 
-		m2.setMemberNumber("202333890");
-		m2.setMemberTier("Green");
-		m2.setPassportNumber("C78678908");
-		m2.setMRZ(5);
-		m2.setMemberName("MA Kathy");
-		m2.setMPM(10000);
+        switch (option) {
+        case 1:
+            members = loadMembers();
+            systemDate = setSystemDate();
+            dataLoaded = true;
+            break;
 
-		m3.setMemberNumber("202067856");
-		m3.setMemberTier("Silver");
-		m3.setPassportNumber("E38876890");
-		m3.setMRZ(1);
-		m3.setMemberName("CHAN Peter");
-		m3.setMPM(53200);
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+        default:
+            cout << "\nInvalid option. Please enter 1-6.\n\n";
+        }
 
-		m4.setMemberNumber("202211843");
-		m4.setMemberTier("Gold");
-		m4.setPassportNumber("E38900078");
-		m4.setMRZ(7);
-		m4.setMemberName("CHEUNG Alice");
-		m4.setMPM(30000);
+    } while (option != 6);
 
-		cout << "Starting data loaded successfully! " << endl;
-		cout << " ***Set System Date for updating Mileage Points*** "<< endl;
-		cout << "Please enter system date(DD - MM - YYYY) : ";
-		cin >> date;
-
-		break;
-	}
-	case 2: break;
-	case 3: break;
-	case 4: break;
-	case 5: break;
-	case 6: break;
-	default: break;
-	}
-	return 0;
+    return 0;
 }
