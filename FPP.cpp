@@ -135,18 +135,6 @@ public:
     void setUpdated(bool UpD){ 
         updated = UpD; 
     }
-
-    /* Display
-    void displayInfo() const {
-        cout << left << setw(12) << memberNumber
-            << setw(12) << origin
-            << setw(12) << destination
-            << setw(12) << flightNumber
-            << setw(10) << cabinClass
-            << setw(12) << departureDate
-            << setw(12) << creationDate
-            << setw(8) << updated << endl;
-    }*/
 };
 
 vector<FlightRecord> loadFlights() {
