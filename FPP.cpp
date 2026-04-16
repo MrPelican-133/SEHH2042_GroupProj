@@ -27,20 +27,31 @@ private:
     int MPB;
 
 public:
-    Member() : MRZ(0), MPB(0) {}
 
-    // Setters
-    void setMemberNumber(string number) { memberNumber = number; }
-    void setMemberTier(string tier) { memberTier = tier; }
-    void setPassportNumber(string passport) { passportNumber = passport; }
-    void setMRZ(int mrz) { MRZ = mrz; }
-    void setMemberName(string name) { memberName = name; }
-    void setMPM(int mpb) { MPB = mpb; }
-
- 
+    Member(){
+        MRZ = 0;
+        MPB = 0;
+    }
+    void setMemberNumber(string number){ 
+        memberNumber = number; 
+    }
+    void setMemberTier(string tier){
+        memberTier = tier;
+    }
+    void setPassportNumber(string passport){
+        passportNumber = passport; 
+    }
+    void setMRZ(int mrz){
+        MRZ = mrz; 
+    }
+    void setMemberName(string name) {
+        memberName = name;
+    }
+    void setMPM(int mpb){ 
+        MPB = mpb;
+    }
 };
 
-// Function to load starting data
 vector<Member> loadMembers() {
     vector<Member> members;
 
@@ -84,7 +95,126 @@ vector<Member> loadMembers() {
     return members;
 }
 
-// Validate system date input
+class FlightRecord {
+private:
+    string memberNumber;
+    string origin;
+    string destination;
+    string flightNumber;
+    string cabinClass;
+    string departureDate;
+    string creationDate;
+    bool updated;
+
+public:
+    FlightRecord() {
+        updated = false;
+    }
+
+    void setMemberNumber(string number){ 
+        memberNumber = number; 
+    }
+    void setOrigin(string orig){ 
+        origin = orig;
+    }
+    void setDestination(string destin){ 
+        destination = destin; 
+    }
+    void setFlightNumber(string flightNum){ 
+        flightNumber = flightNum; 
+    }
+    void setCabinClass(string CabinC){ 
+        cabinClass = CabinC; 
+    }
+    void setDepartureDate(string DepartD){ 
+        departureDate = DepartD; 
+    }
+    void setCreationDate(string CreateD){ 
+        creationDate = CreateD; 
+    }
+    void setUpdated(bool UpD){ 
+        updated = UpD; 
+    }
+
+    /* Display
+    void displayInfo() const {
+        cout << left << setw(12) << memberNumber
+            << setw(12) << origin
+            << setw(12) << destination
+            << setw(12) << flightNumber
+            << setw(10) << cabinClass
+            << setw(12) << departureDate
+            << setw(12) << creationDate
+            << setw(8) << updated << endl;
+    }*/
+};
+
+vector<FlightRecord> loadFlights() {
+    vector<FlightRecord> flights;
+
+    FlightRecord f1; 
+    f1.setMemberNumber("202211843"); 
+    f1.setOrigin("Hong Kong"); 
+    f1.setDestination("London");
+    f1.setFlightNumber("CC51"); 
+    f1.setCabinClass("First"); 
+    f1.setDepartureDate("23-05-2025"); 
+    f1.setCreationDate("01-05-2025");
+    flights.push_back(f1);
+
+    FlightRecord f2; 
+    f2.setMemberNumber("202211843"); 
+    f2.setOrigin("London"); 
+    f2.setDestination("Hong Kong");
+    f2.setFlightNumber("CC82");
+    f2.setCabinClass("First"); 
+    f2.setDepartureDate("10-06-2025"); 
+    f2.setCreationDate("01-05-2025");
+    flights.push_back(f2);
+
+    FlightRecord f3; 
+    f3.setMemberNumber("203233890"); 
+    f3.setOrigin("London"); 
+    f3.setDestination("Dubai");
+    f3.setFlightNumber("CC61"); 
+    f3.setCabinClass("Economy"); 
+    f3.setDepartureDate("12-06-2025"); 
+    f3.setCreationDate("10-06-2025");
+    flights.push_back(f3);
+
+    FlightRecord f4; 
+    f4.setMemberNumber("20067856"); 
+    f4.setOrigin("Hong Kong"); 
+    f4.setDestination("Dubai");
+    f4.setFlightNumber("CC31"); 
+    f4.setCabinClass("Business"); 
+    f4.setDepartureDate("05-07-2025"); 
+    f4.setCreationDate("20-06-2025");
+    flights.push_back(f4);
+
+    FlightRecord f5; 
+    f5.setMemberNumber("20067856"); 
+    f5.setOrigin("Dubai"); 
+    f5.setDestination("London");
+    f5.setFlightNumber("CC62"); 
+    f5.setCabinClass("Business"); 
+    f5.setDepartureDate("08-07-2025"); 
+    f5.setCreationDate("20-06-2025");
+    flights.push_back(f5);
+
+    FlightRecord f6; 
+    f6.setMemberNumber("202456734"); 
+    f6.setOrigin("Dubai"); 
+    f6.setDestination("Hong Kong");
+    f6.setFlightNumber("CC32"); 
+    f6.setCabinClass("Business"); 
+    f6.setDepartureDate("05-08-2025"); 
+    f6.setCreationDate("02-08-2025");
+    flights.push_back(f6);
+
+    return flights;
+}
+
 string setSystemDate() {
     string date;
     int invalidCount = 0;
@@ -111,7 +241,7 @@ string setSystemDate() {
         }
 
         invalidCount++;
-        cout << "Invalid date format or out of range.\n";
+        cout << "Invalid date format or out of range, please try again.\n";
 
         if (invalidCount >= 3) {
             cout << "Too many invalid attempts. Default date set to 30-06-2025.\n";
@@ -134,8 +264,15 @@ void printMainMenu() {
 
 int main() {
     vector<Member> members;
+    vector<FlightRecord> flights;
     bool dataLoaded = false;
     string systemDate;
+    // R1.3
+    /*if (!dataLoaded) {
+        cout << "\nError: Please load starting data first (Option 1).\n\n";}
+    else {
+        cout << "\nFeature not implemented yet (R2-R5).\n\n";
+    }*/
 
     welcome_message();
 
@@ -147,10 +284,10 @@ int main() {
         switch (option) {
         case 1:
             members = loadMembers();
+            flights = loadFlights();
             systemDate = setSystemDate();
             dataLoaded = true;
             break;
-
         case 2:
             break;
         case 3:
