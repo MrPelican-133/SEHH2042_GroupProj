@@ -2,10 +2,22 @@
 #include <iomanip>
 #include <string>
 #include <cmath>
+#include <vector>
 using namespace std;
 
+void welcome_message() {
+	cout << "*************************************************************************\n";
+	cout << "*                                                                       *\n";
+	cout << "*   **    **  *****  **       ******   *****      *     *     ******    *\n";
+	cout << "*   ** ** **  **     **      **       *     *    * *   * *    **        *\n";
+	cout << "*   ** ** **  *****  **     **       *       *  *   * *   *   *****     *\n";
+	cout << "*   ** ** **  **     **      **       *     *  *     *     *  **        *\n";
+	cout << "*    ******   *****  *******  ******   *****  *             * ******    *\n";
+	cout << "*                                                                       *\n";
+	cout << "*************************************************************************\n\n";
+}
 
-void PrintMainMenu(){
+void PrintMainMenu() {
 	cout << "***FFP Main Menu ***" << endl;
 	cout << "[1] Load Starting Data" << endl;
 	cout << "[2] Show All Member Accounts" << endl;
@@ -17,34 +29,25 @@ void PrintMainMenu(){
 	cout << "Option (1 - 6) : ";
 }
 
-void R1_StartingData(){
+void R1_StartingData() {
 
-	
 
 }
 
 int main() {
-
-	int Option;
-
+	welcome_message();
 	PrintMainMenu();
+	int Option;
 	cin >> Option;
 
 	switch (Option) {
-	case 1: R1_StartingData();
-		break;
-	case 2:
-		break;
-	case 3:
-		break;
-	case 4:
-		break;
-	case 5:
-		break;
-	case 6:
-		break;
-	default : 
+	case 1: R1_StartingData(); break;
+	case 2: break;
+	case 3: break;
+	case 4: break;
+	case 5: break;
+	case 6: break;
+	default: break;
 	}
-
 	return 0;
 }
