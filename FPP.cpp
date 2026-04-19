@@ -24,74 +24,52 @@ private:
     string passportNumber;
     int MRZ;
     string memberName;
-    int MPB;
+    int MPB;     
 
 public:
-
-    Member(){
-        MRZ = 0;
-        MPB = 0;
-    }
-    void setMemberNumber(string number){ 
-        memberNumber = number; 
-    }
-    void setMemberTier(string tier){
+    Member(string number, string tier, string passport, int mrz, string name, int points) {
+        memberNumber = number;
         memberTier = tier;
-    }
-    void setPassportNumber(string passport){
-        passportNumber = passport; 
-    }
-    void setMRZ(int mrz){
-        MRZ = mrz; 
-    }
-    void setMemberName(string name) {
+        passportNumber = passport;
+        MRZ = mrz;
         memberName = name;
+        MPB = points;
+
     }
-    void setMPM(int mpb){ 
-        MPB = mpb;
+
+    string getMemberNumber() const { 
+        return memberNumber; 
+    }
+    string getMemberTier() const { 
+        return memberTier; 
+    }
+    string getPassportNumber() const { 
+        return passportNumber; 
+    }
+    int getMRZ() const { 
+        return MRZ; 
+    }
+    string getMemberName() const { 
+        return memberName; 
+    }
+    int getMPB() const { 
+        return MPB; 
+    }
+
+    void addMileagePoints(int points) {
+        if (points > 0) MPB += points;
     }
 };
 
 vector<Member> loadMembers() {
-    vector<Member> members;
+    vector<Member> members = {
+        {"202456734", "Gold",   "A56678990", 4, "WONG Claire",   45000},
+        {"203233890", "Green",  "C78678908", 5, "MA Kathy",      10000},
+        {"20067856",  "Silver", "E38578900", 1, "CHAN Peter",    53200},
+        {"202211843", "Gold",   "E38900708", 7, "CHEUNG Alice",  30000}
+    };
 
-    Member m1;
-    m1.setMemberNumber("202456734");
-    m1.setMemberTier("Gold");
-    m1.setPassportNumber("A56678990");
-    m1.setMRZ(4);
-    m1.setMemberName("WONG Claire");
-    m1.setMPM(45000);
-    members.push_back(m1);
-
-    Member m2;
-    m2.setMemberNumber("203233890");
-    m2.setMemberTier("Green");
-    m2.setPassportNumber("C78678908");
-    m2.setMRZ(5);
-    m2.setMemberName("MA Kathy");
-    m2.setMPM(10000);
-    members.push_back(m2);
-
-    Member m3;
-    m3.setMemberNumber("20067856");
-    m3.setMemberTier("Silver");
-    m3.setPassportNumber("E38578900");
-    m3.setMRZ(1);
-    m3.setMemberName("CHAN Peter");
-    m3.setMPM(53200);
-    members.push_back(m3);
-
-    Member m4;
-    m4.setMemberNumber("202211843");
-    m4.setMemberTier("Gold");
-    m4.setPassportNumber("E38900708");
-    m4.setMRZ(7);
-    m4.setMemberName("CHEUNG Alice");
-    m4.setMPM(30000);
-    members.push_back(m4);
-
-    cout << "\nStarting data loaded successfully!\n";
+    cout << "\nStarting data loaded successfully! (" << members.size() << " members)\n";
     return members;
 }
 
@@ -104,105 +82,57 @@ private:
     string cabinClass;
     string departureDate;
     string creationDate;
-    bool updated;
+    bool updated = false;     // default value in declaration
 
 public:
-    FlightRecord() {
-        updated = false;
+    // Constructor
+    FlightRecord(string memNum, string orig, string dest, string flightNum, string cabin, string depDate, string createDate){
+        memberNumber = memNum;
+        origin = orig;
+        destination = dest;
+        flightNumber = flightNum;
+        cabinClass = cabin;
+        departureDate = depDate;
+        creationDate = createDate;
     }
 
-    void setMemberNumber(string number){ 
-        memberNumber = number; 
+    // Getters
+    string getMemberNumber() const { 
+        return memberNumber; 
     }
-    void setOrigin(string orig){ 
-        origin = orig;
+    string getOrigin() const { 
+        return origin; 
     }
-    void setDestination(string destin){ 
-        destination = destin; 
+    string getDestination() const { 
+        return destination; 
     }
-    void setFlightNumber(string flightNum){ 
-        flightNumber = flightNum; 
+    string getFlightNumber() const { 
+        return flightNumber; 
     }
-    void setCabinClass(string CabinC){ 
-        cabinClass = CabinC; 
+    string getCabinClass() const { 
+        return cabinClass; 
     }
-    void setDepartureDate(string DepartD){ 
-        departureDate = DepartD; 
+    string getDepartureDate() const { 
+        return departureDate; 
     }
-    void setCreationDate(string CreateD){ 
-        creationDate = CreateD; 
-    }
-    void setUpdated(bool UpD){ 
-        updated = UpD; 
+    string getCreationDate() const { 
+        return creationDate; 
     }
 };
 
 vector<FlightRecord> loadFlights() {
-    vector<FlightRecord> flights;
+    vector<FlightRecord> flights = {
+        {"202211843", "Hong Kong", "London",  "CC51", "First",    "23-05-2025", "01-05-2025"},
+        {"202211843", "London",    "Hong Kong","CC82", "First",    "10-06-2025", "01-05-2025"},
+        {"203233890", "London",    "Dubai",   "CC61", "Economy",  "12-06-2025", "10-06-2025"},
+        {"20067856",  "Hong Kong", "Dubai",   "CC31", "Business", "05-07-2025", "20-06-2025"},
+        {"20067856",  "Dubai",     "London",  "CC62", "Business", "08-07-2025", "20-06-2025"},
+        {"202456734", "Dubai",     "Hong Kong","CC32", "Business", "05-08-2025", "02-08-2025"}
+    };
 
-    FlightRecord f1; 
-    f1.setMemberNumber("202211843"); 
-    f1.setOrigin("Hong Kong"); 
-    f1.setDestination("London");
-    f1.setFlightNumber("CC51"); 
-    f1.setCabinClass("First"); 
-    f1.setDepartureDate("23-05-2025"); 
-    f1.setCreationDate("01-05-2025");
-    flights.push_back(f1);
-
-    FlightRecord f2; 
-    f2.setMemberNumber("202211843"); 
-    f2.setOrigin("London"); 
-    f2.setDestination("Hong Kong");
-    f2.setFlightNumber("CC82");
-    f2.setCabinClass("First"); 
-    f2.setDepartureDate("10-06-2025"); 
-    f2.setCreationDate("01-05-2025");
-    flights.push_back(f2);
-
-    FlightRecord f3; 
-    f3.setMemberNumber("203233890"); 
-    f3.setOrigin("London"); 
-    f3.setDestination("Dubai");
-    f3.setFlightNumber("CC61"); 
-    f3.setCabinClass("Economy"); 
-    f3.setDepartureDate("12-06-2025"); 
-    f3.setCreationDate("10-06-2025");
-    flights.push_back(f3);
-
-    FlightRecord f4; 
-    f4.setMemberNumber("20067856"); 
-    f4.setOrigin("Hong Kong"); 
-    f4.setDestination("Dubai");
-    f4.setFlightNumber("CC31"); 
-    f4.setCabinClass("Business"); 
-    f4.setDepartureDate("05-07-2025"); 
-    f4.setCreationDate("20-06-2025");
-    flights.push_back(f4);
-
-    FlightRecord f5; 
-    f5.setMemberNumber("20067856"); 
-    f5.setOrigin("Dubai"); 
-    f5.setDestination("London");
-    f5.setFlightNumber("CC62"); 
-    f5.setCabinClass("Business"); 
-    f5.setDepartureDate("08-07-2025"); 
-    f5.setCreationDate("20-06-2025");
-    flights.push_back(f5);
-
-    FlightRecord f6; 
-    f6.setMemberNumber("202456734"); 
-    f6.setOrigin("Dubai"); 
-    f6.setDestination("Hong Kong");
-    f6.setFlightNumber("CC32"); 
-    f6.setCabinClass("Business"); 
-    f6.setDepartureDate("05-08-2025"); 
-    f6.setCreationDate("02-08-2025");
-    flights.push_back(f6);
-
+    cout << "Flight records loaded successfully! (" << flights.size() << " flights)\n";
     return flights;
 }
-
 string setSystemDate() {
     string date;
     int invalidCount = 0;
