@@ -238,6 +238,32 @@ string setSystemDate() {
     }
 }
 
+void exit_message() {
+	char quit;
+	cout<<"Are you sure you want to quit (Y/N) : ";
+	cin>>quit;
+	while (quit!="Y" && quit!="y" && quit!="N" && quit!="n"){
+	cout<<"Please enter Y or y for Yes and N or n for No!"<<endl;
+	cout<<"Are you sure you want to quit (Y/N) : ";
+	cin>>quit;
+	}
+	if (quit=="Y" || quit=="y"){
+	cout << "*************************************************************************"<<endl;
+	cout << "     Student ID         Name                          Tutorial Group     "<<endl;
+	cout << "-------------------------------------------------------------------------"<<endl;
+	cout << "     Student ID         Chow Tsz Hin                  Tutorial Group     "<<endl;
+	cout << "     25108664A          Lam Chun Hei David            B02C               "<<endl;
+	cout << "     Student ID         Leung Ka Yan                  Tutorial Group     "<<endl;
+	cout << "     25093449A          Lui Yik To                    B02C               "<<endl;
+	cout << "     Student ID         Zhang Hung Shing              Tutorial Group     "<<endl;
+	cout << "*************************************************************************"<<endl;
+	cout << "                Thank You For Using The System! Bye Bye!                 "<<endl;
+	cout << "*************************************************************************"<<endl;
+	}
+	else
+		option=0;
+}
+
 void printMainMenu() {
     cout << "*** FFP Main Menu ***\n";
     cout << "[1] Load Starting Data\n";
@@ -285,6 +311,7 @@ int main() {
         case 5:
             break;
         case 6:
+			exit_message();
             break;
         default:
             cout << "\nInvalid option. Please enter 1-6.\n\n";
