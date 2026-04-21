@@ -47,7 +47,7 @@ public:
     void setMemberName(string name) {
         memberName = name;
     }
-    void setMPM(int mpb){ 
+    void setMPB(int mpb){ 
         MPB = mpb;
     }
 };
@@ -61,7 +61,7 @@ vector<Member> loadMembers() {
     m1.setPassportNumber("A56678990");
     m1.setMRZ(4);
     m1.setMemberName("WONG Claire");
-    m1.setMPM(45000);
+    m1.setMPB(45000);
     members.push_back(m1);
 
     Member m2;
@@ -70,7 +70,7 @@ vector<Member> loadMembers() {
     m2.setPassportNumber("C78678908");
     m2.setMRZ(5);
     m2.setMemberName("MA Kathy");
-    m2.setMPM(10000);
+    m2.setMPB(10000);
     members.push_back(m2);
 
     Member m3;
@@ -79,7 +79,7 @@ vector<Member> loadMembers() {
     m3.setPassportNumber("E38578900");
     m3.setMRZ(1);
     m3.setMemberName("CHAN Peter");
-    m3.setMPM(53200);
+    m3.setMPB(53200);
     members.push_back(m3);
 
     Member m4;
@@ -88,7 +88,7 @@ vector<Member> loadMembers() {
     m4.setPassportNumber("E38900708");
     m4.setMRZ(7);
     m4.setMemberName("CHEUNG Alice");
-    m4.setMPM(30000);
+    m4.setMPB(30000);
     members.push_back(m4);
 
     cout << "\nStarting data loaded successfully!\n";
