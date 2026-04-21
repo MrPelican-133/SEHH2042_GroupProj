@@ -238,6 +238,45 @@ string setSystemDate() {
     }
 }
 
+void gen() {
+	char num;
+	bool exist=False;
+	cout<<"Input a member number : ";
+	cin>>num;
+	for (int i=0;i<members.size();i++)
+		if(num==members(i))
+			exisst=True;
+	while (not exist){
+	cout<<"Such member number is not exist!"<<endl<<"Please enter a member number again: ";
+	cin>>num;
+	for (int i=0;i<members.size();i++)
+		if(num==members(i))
+			exisst=True;
+	}
+	if (quit=="Y" || quit=="y"){
+	cout<<left;
+	cout << "Member Name: CHAN Peter
+Member Number: 202067856
+Statement Date: 30-06-2025
+----------------------------------------------------------------
+Transaction Summary:
+Type Mileage Description
+Redemption -4000 Gift# 2
+----------------------------------------------------------------
+Upcoming Itinerary:
+Origin Destination Flight Cabin Departure
+Number Class Date
+Hong Kong Dubai CC31 Business 05-07-2025
+Dubai London CC62 Business 08-07-2025
+----------------------------------------------------------------
+Member Account Summary:
+Total Mileage Points Balance : 49200
+Member Tier : Gold
+Bonus Mileage Points : 2%"<<endl;
+	}
+	
+}
+
 int exit_message() {
 	char quit;
 	cout<<"Are you sure you want to quit (Y/N) : ";
@@ -314,6 +353,7 @@ int main() {
         case 4:
             break;
         case 5:
+			gen();
             break;
         case 6:
 			option=exit_message();
