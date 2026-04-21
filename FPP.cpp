@@ -50,6 +50,22 @@ public:
     void setMPB(int mpb){ 
         MPB = mpb;
     }
+    string getMemberNumber() const { 
+        return memberNumber; 
+    }
+    string getMemberTier() const { 
+        return memberTier; 
+    }
+    string getMemberName() const { 
+        return memberName; 
+    }
+    string getPassportNumber() const {
+        return passportNumber;
+    }
+	int getMPB() const { 
+        return MPB; 
+    }
+
 };
 
 vector<Member> loadMembers() {
@@ -135,6 +151,28 @@ public:
     void setUpdated(bool UpD){ 
         updated = UpD; 
     }
+    string getMemberNumber() const { 
+        return memberNumber; 
+    }
+    bool isUpdated() const { 
+        return updated; 
+    }
+    string getDepartureDate() const { 
+        return departureDate; 
+    }
+    string getOrigin() const {
+        return origin;
+    }
+    string getDestination() const {
+        return destination;
+    }
+    string getCabinClass() const {
+        return cabinClass;
+    }
+    string getFlightNumber() const {
+        return flightNumber;
+    }
+    
 };
 
 vector<FlightRecord> loadFlights() {
@@ -238,6 +276,398 @@ string setSystemDate() {
     }
 }
 
+void doR4_1(Member& m) {
+    string name, passport, tier;
+    bool validPassport = false;
+    bool tiertrue = false;
+
+    cout << "\n*** [1] Edit Member Information ***\n";
+    cout << "Current Member Name: " << m.getMemberName() << endl;
+    cout << "Current Passport Number: " << m.getPassportNumber() << endl;
+    cout << "Current Member Tier: " << m.getMemberTier() << endl;
+
+
+    cout << "\nEnter new Member Name: ";
+    cin.ignore();
+    getline(cin, name); 
+
+    while (!validPassport) {
+        cout << "Enter new Passport Number (1 uppercase letter + 8 digits): ";
+        cin >> passport;
+
+        if (passport.length() == 9 && isupper(passport[0])) {
+            validPassport = true;
+            for (int i = 1; i < 9; i++) {
+                if (!isdigit(passport[i])) {
+                    validPassport = false;
+                    break;
+                }
+            }
+        }
+
+        if (!validPassport) {
+            cout << "Invalid format! Passport must be 1 uppercase letter followed by 8 digits.\n"; 
+        }
+    }
+
+    do {
+        cout << "Enter new Member Tier (Green/Silver/Gold/Diamond): ";
+        cin >> tier;
+        if ((tier == "Green") || (tier == "Silver") || (tier == "Gold") || (tier == "Diamond")) {
+            tiertrue = true;
+        }
+        else
+        {
+            cout << "Error: Invalid input.\n";
+        }
+    } while (!tiertrue);
+
+
+
+    char confirm;
+    do {
+        cout << "\nConfirm the changes? (Y/N): "; 
+        cin >> confirm;
+        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
+            cout << "Invalid input. Please enter 'Y' or 'N'.\n";
+        }
+    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
+
+    if (confirm == 'Y' || confirm == 'y') {
+        m.setMemberName(name);
+        m.setPassportNumber(passport); 
+        m.setMemberTier(tier); 
+
+        int total = 0;
+        int weights[] = { 7, 3, 1, 7, 3, 1, 7, 3, 1 };
+        for (int i = 0; i < 9; i++) {
+            int val;
+            if (i == 0) val = passport[i] - 'A' + 10; 
+            else val = passport[i] - '0';
+
+            total += val * weights[i]; 
+        }
+        m.setMRZ(total % 10); 
+        cout << "Member information updated successfully. New MRZ: " << total % 10 << endl;
+    }
+    else {
+        cout << "Update cancelled.\n";
+    }
+}
+
+void doR4_2(Member& m, vector<FlightRecord>& flights, string systemDate) {
+    int totalEarned = 0;
+    auto dateToInt = [](string date) {
+        return stoi(date.substr(6, 4) + date.substr(3, 2) + date.substr(0, 2));
+        };
+
+    int sysDateVal = dateToInt(systemDate);
+    int totalPointsEarned = 0;
+    bool foundAny = false;
+    cout << "Updating points for flights before " << systemDate << "...\n";
+
+    cout << left << setw(15) << "Member" << setw(10) << "Flight" << setw(15) << "Cabin"
+        << setw(15) << "Departure" << setw(10) << "Updated" << endl;
+    cout << left << setw(15) << "Number" << setw(10) << "Number" << setw(15) << "Class"
+        << setw(15) << "Date" << setw(10) << "-------" << endl;
+    cout << "----------------------------------------------------------------------" << endl;
+    for (int i = 0; i < flights.size(); i++) {
+        if (flights[i].getMemberNumber() == m.getMemberNumber() &&
+            !flights[i].isUpdated() &&
+            dateToInt(flights[i].getDepartureDate()) < sysDateVal) {
+
+            foundAny = true;
+            cout << left << setw(15) << flights[i].getMemberNumber()
+                << setw(10) << flights[i].getFlightNumber()
+                << setw(15) << flights[i].getCabinClass()
+                << setw(15) << flights[i].getDepartureDate()
+                << setw(10) << "0" << endl;
+        }
+    }
+
+    if (!foundAny) {
+        cout << "\nNo pending flight records found preceding " << systemDate << ".\n";
+        return;
+    }
+    for (int i = 0; i < flights.size(); i++) {
+        if (flights[i].getMemberNumber() == m.getMemberNumber() && !flights[i].isUpdated()) {
+
+            int baseMiles = 0;
+            if (flights[i].getOrigin() == "Hong Kong" ) {
+                if (flights[i].getDestination() == "London") {
+                    if (flights[i].getCabinClass() == "First") {
+                        baseMiles = 16000;
+                    }
+                    else if (flights[i].getCabinClass() == "Business") {
+                        baseMiles = 8000;
+
+                    }
+                    else {
+                        baseMiles = 4000;
+                    }
+                }
+                else if (flights[i].getDestination() == "Dubai"){
+                    if (flights[i].getCabinClass() == "First") {
+                        baseMiles = 8000;
+                    }
+                    else if (flights[i].getCabinClass() == "Business") {
+                        baseMiles = 4000;
+
+                    }
+                    else {
+                        baseMiles = 2000;
+                    }
+                }
+            }
+            else if (flights[i].getOrigin() == "Dubai") {
+                if (flights[i].getDestination() == "London") {
+                    if (flights[i].getCabinClass() == "First") {
+                        baseMiles = 8000;
+                    }
+                    else if (flights[i].getCabinClass() == "Business") {
+                        baseMiles = 4000;
+
+                    }
+                    else {
+                        baseMiles = 2000;
+                    }
+                }
+                else if (flights[i].getDestination() == "Hong Kong") {
+                    if (flights[i].getCabinClass() == "First") {
+                        baseMiles = 8000;
+                    }
+                    else if (flights[i].getCabinClass() == "Business") {
+                        baseMiles = 4000;
+
+                    }
+                    else {
+                        baseMiles = 2000;
+                    }
+                }
+            }
+            else if (flights[i].getOrigin() == "London") {
+                if (flights[i].getDestination() == "Hong Kong") {
+                    if (flights[i].getCabinClass() == "First") {
+                        baseMiles = 16000;
+                    }
+                    else if (flights[i].getCabinClass() == "Business") {
+                        baseMiles = 8000;
+
+                    }
+                    else {
+                        baseMiles = 4000;
+                    }
+                }
+                else if (flights[i].getDestination() == "Dubai") {
+                    if (flights[i].getCabinClass() == "First") {
+                        baseMiles = 8000;
+                    }
+                    else if (flights[i].getCabinClass() == "Business") {
+                        baseMiles = 4000;
+
+                    }
+                    else {
+                        baseMiles = 2000;
+                    }
+                }
+            }
+            double bonus = 0; 
+            if (m.getMemberTier() == "Silver") bonus = 0.02;
+            else if (m.getMemberTier() == "Gold") bonus = 0.04;
+            else if (m.getMemberTier() == "Diamond") bonus = 0.06;
+
+            int flightTotal = baseMiles * (1 + bonus);
+            totalEarned += flightTotal;
+            flights[i].setUpdated(true);
+        }
+    }
+        m.setMPB(m.getMPB() + totalEarned);
+        cout << "Total Points Earned: " << totalEarned << "\nNew Balance: " << m.getMPB() << endl;
+}
+
+void doR4_3(string mNum, vector<FlightRecord>& flights, string systemDate) {
+    string fNum, cabin, departDate;
+    string origin = "", destination = "";
+    bool validFlight = false;
+    bool cabintrue = false;
+
+    cout << "Enter Flight Number (e.g., CC81): ";
+    cin >> fNum;
+
+    if (fNum == "CC81") { origin = "Hong Kong"; destination = "London"; validFlight = true; }
+    else if (fNum == "CC82") { origin = "London"; destination = "Hong Kong"; validFlight = true; }
+    else if (fNum == "CC31") { origin = "Hong Kong"; destination = "Dubai"; validFlight = true; }
+    else if (fNum == "CC32") { origin = "Dubai"; destination = "Hong Kong"; validFlight = true; }
+    else if (fNum == "CC61") { origin = "London"; destination = "Dubai"; validFlight = true; }
+    else if (fNum == "CC62") { origin = "Dubai"; destination = "London"; validFlight = true; }
+
+    if (!validFlight) {
+        cout << "Error: Invalid Flight Number. Record not created.\n";
+        return;
+    }
+
+    cout << "Origin: " << origin << endl;
+    cout << "Destination: " << destination << endl;
+
+    do {
+        cout << "Enter Cabin Class (First/Business/Economy): ";
+        cin >> cabin;
+        if ((cabin == "First") || (cabin == "Business") || (cabin == "Economy")) {
+            cabintrue = true;
+        }
+        else
+        {
+            cout << "Error: Invalid cabin.\n";
+        }
+    } while (!cabintrue);
+
+
+    while (true) {
+        cout << "Enter Departure Date (DD-MM-YYYY): ";
+        cin >> departDate;
+
+        if (departDate.size() == 10 && departDate[2] == '-' && departDate[5] == '-') {
+            string day = departDate.substr(0, 2);
+            string month = departDate.substr(3, 2);
+            string year = departDate.substr(6, 4);
+
+            int d = stoi(day);
+            int m = stoi(month);
+            int y = stoi(year);
+
+            if (y == 2025 && d >= 1 && d <= 31 && m >= 1 && m <= 12) {
+                break;
+                
+            }
+        }
+
+        cout << "Invalid date format or out of range, please try again.\n";
+
+    }
+
+    char confirm;
+    do {
+        cout << "Confirm adding this flight record? (Y/N): ";
+        cin >> confirm;
+        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
+            cout << "Invalid input. Please enter 'Y' or 'N'.\n";
+        }
+    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
+
+    if (confirm == 'Y' || confirm == 'y') {
+        FlightRecord newFlight;
+        newFlight.setMemberNumber(mNum);
+        newFlight.setFlightNumber(fNum);
+        newFlight.setOrigin(origin);
+        newFlight.setDestination(destination);
+        newFlight.setCabinClass(cabin);
+        newFlight.setDepartureDate(departDate);
+        newFlight.setCreationDate(systemDate);
+        newFlight.setUpdated(false);
+
+        flights.push_back(newFlight);
+        cout << "\nFlight entry added successfully.\n";
+    }
+    else {
+        cout << "\nOperation aborted.\n";
+    }
+}
+
+void doR4_4(Member& source, vector<Member>& allMembers, string systemDate) {
+    int subOp;
+    cout << "[1] Redeem Gift\n[2] Transfer Points\nOption: ";
+    cin >> subOp;
+    int cost;
+    if (subOp == 1) { 
+        string giftNum;
+        bool giftNumtrue = false;
+        do {
+            cout << "Select Gift (1: Movie - 3000, 2: $100 Voucher - 4000, 3: Lounge - 6000): ";
+            cin >> giftNum;
+            if (giftNum == "1") {
+                cost = 3000;
+                giftNumtrue = true;
+            }
+            else if (giftNum == "2") {
+                cost = 4000;
+                giftNumtrue = true;
+            }
+            else if (giftNum == "3") {
+                cost = 6000;
+                giftNumtrue = true;
+            }
+            else {
+                cout << "Error: Insufficient input.\n";
+                
+            }
+        } while (!giftNumtrue);
+
+        if (source.getMPB() >= cost) {
+            source.setMPB(source.getMPB() - cost); 
+            cout << "Redemption successful!\n";
+        }
+        else {
+            cout << "Error: Insufficient balance.\n"; 
+        }
+    }
+    else if (subOp == 2) { 
+        string targetID;
+        int amount;
+        cout << "Enter target Member Number: "; cin >> targetID;
+        cout << "Enter amount: "; cin >> amount;
+
+        for (auto& target : allMembers) {
+            if (target.getMemberNumber() == targetID && amount > 0 && source.getMPB() >= amount) {
+                source.setMPB(source.getMPB() - amount); 
+                target.setMPB(target.getMPB() + amount);
+                cout << "Transfer to " << target.getMemberName() << " successful!\n";
+                return;
+            }
+        }
+        cout << "Transfer failed (Invalid ID or insufficient points).\n";
+    }
+}
+
+void memberAccountOperations(vector<Member>& members, vector<FlightRecord>& flights, string& systemDate) {
+    string searchID;
+    cout << "Enter Member Number: ";
+    cin >> searchID;
+
+    int memberIdx = -1;
+    for (int i = 0; i < members.size(); i++) {
+        if (members[i].getMemberNumber() == searchID) {
+            memberIdx = i;
+            break;
+        }
+    }
+
+    if (memberIdx == -1) {
+        cout << "Error: Member Number does not exist.\n";
+        return;
+    }
+
+    int op;
+    do {
+        cout << "\nAction for Member Number: " << members[memberIdx].getMemberNumber() << endl;
+        cout << "***** Member Account Operations Menu\n";
+        cout << "[1] Edit Member Information\n";
+        cout << "[2] Update Mileage Points Balance according to Flight Records\n";
+        cout << "[3] Create Flight Records\n";
+        cout << "[4] Redeem Mileage Points for a Gift & Transfer\n";
+        cout << "[5] Return to Main Menu\n";
+        cout << "**************************************\n";
+        cout << "Option (1-5): ";
+        cin >> op;
+
+        if (op == 1) doR4_1(members[memberIdx]);
+        else if (op == 2) doR4_2(members[memberIdx], flights, systemDate);
+        else if (op == 3) doR4_3(members[memberIdx].getMemberNumber(), flights, systemDate);
+        else if (op == 4) doR4_4(members[memberIdx], members, systemDate);
+
+    } while (op != 5);
+}
+
+
 void printMainMenu() {
     cout << "*** FFP Main Menu ***\n";
     cout << "[1] Load Starting Data\n";
@@ -281,6 +711,13 @@ int main() {
         case 3:
             break;
         case 4:
+			if (!dataLoaded) {
+                cout << "Error: Load starting data first!\n";
+            }
+            else {
+                memberAccountOperations(members, flights, systemDate);
+            }
+            break;
             break;
         case 5:
             break;
