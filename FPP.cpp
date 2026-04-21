@@ -238,7 +238,7 @@ string setSystemDate() {
     }
 }
 
-void exit_message() {
+int exit_message() {
 	char quit;
 	cout<<"Are you sure you want to quit (Y/N) : ";
 	cin>>quit;
@@ -248,20 +248,25 @@ void exit_message() {
 	cin>>quit;
 	}
 	if (quit=="Y" || quit=="y"){
+	cout<<left;
 	cout << "*************************************************************************"<<endl;
-	cout << "     Student ID         Name                          Tutorial Group     "<<endl;
+	cout << setw(5)<<setw(19)<<"Student ID"<<setw(30)<<"Name"<<setw(19)<<"Tutorial Group"<<endl;
 	cout << "-------------------------------------------------------------------------"<<endl;
-	cout << "     Student ID         Chow Tsz Hin                  Tutorial Group     "<<endl;
-	cout << "     25108664A          Lam Chun Hei David            B02C               "<<endl;
-	cout << "     Student ID         Leung Ka Yan                  Tutorial Group     "<<endl;
-	cout << "     25093449A          Lui Yik To                    B02C               "<<endl;
-	cout << "     Student ID         Zhang Hung Shing              Tutorial Group     "<<endl;
+	cout << setw(5)<<setw(19)<<"25196230A"<<setw(30)<<"Chow Tsz Hin"<<setw(19)<<"B02C"<<endl;
+	cout << setw(5)<<setw(19)<<"25108664A"<<setw(30)<<"Lam Chun Hei David"<<setw(19)<<"B02C"<<endl;
+	cout << setw(5)<<setw(19)<<"????????A"<<setw(30)<<"Leung Ka Yan"<<setw(19)<<"B02A"<<endl;
+	cout << setw(5)<<setw(19)<<"25093449A"<<setw(30)<<"Lui Yik To"<<setw(19)<<"B02C"<<endl;		
+	cout << setw(5)<<setw(19)<<"25106498A"<<setw(30)<<"Zhang Hung Shing"<<setw(19)<<"B02C"<<endl;
 	cout << "*************************************************************************"<<endl;
-	cout << "                Thank You For Using The System! Bye Bye!                 "<<endl;
+	cout << setw(16)<<setw(57)<<"Thank You For Using The System! Bye Bye!"<<endl;
 	cout << "*************************************************************************"<<endl;
+	cout<<right;
+	return 6;
 	}
-	else
-		option=0;
+	else{
+		cout<<right;
+		return 0;
+	}
 }
 
 void printMainMenu() {
@@ -311,7 +316,7 @@ int main() {
         case 5:
             break;
         case 6:
-			exit_message();
+			option=exit_message();
             break;
         default:
             cout << "\nInvalid option. Please enter 1-6.\n\n";
