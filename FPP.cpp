@@ -293,7 +293,7 @@ int exit_message() {
 	cout << "-------------------------------------------------------------------------"<<endl;
 	cout << setw(5)<<setw(19)<<"25196230A"<<setw(30)<<"Chow Tsz Hin"<<setw(19)<<"B02C"<<endl;
 	cout << setw(5)<<setw(19)<<"25108664A"<<setw(30)<<"Lam Chun Hei David"<<setw(19)<<"B02C"<<endl;
-	cout << setw(5)<<setw(19)<<"????????A"<<setw(30)<<"Leung Ka Yan"<<setw(19)<<"B02A"<<endl;
+	cout << setw(5)<<setw(19)<<"25131157A"<<setw(30)<<"Leung Ka Yan"<<setw(19)<<"B02A"<<endl;
 	cout << setw(5)<<setw(19)<<"25093449A"<<setw(30)<<"Lui Yik To"<<setw(19)<<"B02C"<<endl;		
 	cout << setw(5)<<setw(19)<<"25106498A"<<setw(30)<<"Zhang Hung Shing"<<setw(19)<<"B02C"<<endl;
 	cout << "*************************************************************************"<<endl;
