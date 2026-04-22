@@ -50,6 +50,25 @@ public:
     void setMPM(int mpb){ 
         MPB = mpb;
     }
+	string getMemberNumber(){ 
+        return memberNumber; 
+    }
+    string getMemberTier(){
+        return memberTier;
+    }
+    string getPassportNumber(){
+        return passportNumber; 
+    }
+    int getMRZ(){
+        return MRZ; 
+    }
+    string getMemberName() {
+        return memberName;
+    }
+    int getMPM(){ 
+        return MPB;
+    }
+
 };
 
 vector<Member> loadMembers() {
@@ -134,6 +153,30 @@ public:
     }
     void setUpdated(bool UpD){ 
         updated = UpD; 
+    }
+	string getMemberNumber(){
+		return memberNumber;
+	}
+	string getOrigin(){
+		return origin;
+	}
+	string getDestination(){ 
+        return destination; 
+    }
+    string getFlightNumber(){ 
+        return flightNumber; 
+    }
+    string getCabinClass(){ 
+        return cabinClass; 
+    }
+    string getDepartureDate(){ 
+        return departureDate; 
+    }
+    string getCreationDate(){ 
+        return creationDate; 
+    }
+    bool getUpdated(){ 
+        return updated; 
     }
 };
 
@@ -238,50 +281,59 @@ string setSystemDate() {
     }
 }
 
-void gen() {
-	char num;
-	bool exist=False;
+void gen(vector<Member> &members,vector<FlightRecord> &flights,string systemDate) {
+	string input;//get input of mem num
+	int index=-1;//to find where is the required record
 	cout<<"Input a member number : ";
-	cin>>num;
-	for (int i=0;i<members.size();i++)
-		if(num==members(i))
-			exisst=True;
-	while (not exist){
-	cout<<"Such member number is not exist!"<<endl<<"Please enter a member number again: ";
-	cin>>num;
-	for (int i=0;i<members.size();i++)
-		if(num==members(i))
-			exisst=True;
+	cin>>input;
+	for (int i=0;i<members.size();i++)  //loop to check until find that requied mem num
+		if(input==members[i].getMemberNumber()){
+			index=i;
+			break;
+		}
+	if(index==-1){ //error message for not found
+		cout<<"Such member number is not exist!"<<endl;
+		return;
 	}
-	if (quit=="Y" || quit=="y"){
+	Member m=members[index]; //make new object m and store the mem num record in it
 	cout<<left;
-	cout << "Member Name: CHAN Peter
-Member Number: 202067856
-Statement Date: 30-06-2025
-----------------------------------------------------------------
-Transaction Summary:
-Type Mileage Description
-Redemption -4000 Gift# 2
-----------------------------------------------------------------
-Upcoming Itinerary:
-Origin Destination Flight Cabin Departure
-Number Class Date
-Hong Kong Dubai CC31 Business 05-07-2025
-Dubai London CC62 Business 08-07-2025
-----------------------------------------------------------------
-Member Account Summary:
-Total Mileage Points Balance : 49200
-Member Tier : Gold
-Bonus Mileage Points : 2%"<<endl;
+	cout <<setw(13)<< "Member Name: "<<setw(51)<<m.getMemberName()<<endl;
+	cout<<setw(15)<<"Member Number: "<<setw(49)<<m.getMemberNumber()<<endl;
+	cout<<setw(17)<<"Statement Date: "<<setw(47)<<systemDate<<endl;
+	cout<<"----------------------------------------------------------------"<<endl;
+	cout<<"Transaction Summary:"<<endl;
+	cout<<setw(18)<<"Type"<<setw(12)<<"Mileage"<<setw(34)<<"Description"endl;
+	cout<<"Redemption -4000 Gift# 2"<<endl //don't know where to get the record yet
+	cout<<"----------------------------------------------------------------"<<endl;
+	cout<<"Upcoming Itinerary:"<<endl;
+	cout<<stew(12)<<"Origin"<<setw(18)<<"Destination"<<setw(12)<<"Flight"<<setw(12)<<"Cabin"<<setw(10)<<"Departure"<<endl;
+	cout<<stew(30)<<setw(12)<<"Number"<<setw(12)<<"Class"<<setw(10)<<"Date"<<endl;
+	for (int i=0;i<flights.size();i++)//loop to look all flight record and show if it has same mem num as input
+		if(input==flights[i].getMemberNumber)
+			cout<<stew(12)<<flights[i].getOrigin()<<setw(18)<<flights[i].getDestination()<<setw(12)<<flights[i].getFlightNumber()<<setw(12)<<flights[i].getCabinClass()<<setw(10)<<flights[i].getDepartureDate"<<endl;
+	cout<<"----------------------------------------------------------------"<<endl;
+	cout<<"Member Account Summary:"<<endl;
+	cout<<setw(48)<<"Total Mileage Points Balance"<<":"<<m.getMPM()<<endl;
+	cout<<setw(48)<<"Member Tier"<<":"<<m.getMemberTier()<<endl;
+	cout<<setw(48)<<"Bonus Mileage Points"<<":";
+	string bouns=m.getMemberTier();
+	if (bouns=="Green")
+		cout<<"0%";
+	else if (bouns=="Silver")
+		cout<<"2%";
+	else if (bouns=="Gold")
+		cout<<"4%";
+	else if (bouns=="Diamond")
+		cout<<"6%";
+	cout<<endl;
 	}
-	
 }
 
 int exit_message() {
-	char quit;
+	string quit;
 	cout<<"Are you sure you want to quit (Y/N) : ";
 	cin>>quit;
-	while (quit!="Y" && quit!="y" && quit!="N" && quit!="n"){
+	while (quit!="Y" && quit!="y" && quit!="N" && quit!="n"){//only accept YyNn
 	cout<<"Please enter Y or y for Yes and N or n for No!"<<endl;
 	cout<<"Are you sure you want to quit (Y/N) : ";
 	cin>>quit;
@@ -289,22 +341,22 @@ int exit_message() {
 	if (quit=="Y" || quit=="y"){
 	cout<<left;
 	cout << "*************************************************************************"<<endl;
-	cout << setw(5)<<setw(19)<<"Student ID"<<setw(30)<<"Name"<<setw(19)<<"Tutorial Group"<<endl;
+	cout << setw(5)<<" "<<setw(19)<<"Student ID"<<setw(30)<<"Name"<<setw(19)<<"Tutorial Group"<<endl;
 	cout << "-------------------------------------------------------------------------"<<endl;
-	cout << setw(5)<<setw(19)<<"25196230A"<<setw(30)<<"Chow Tsz Hin"<<setw(19)<<"B02C"<<endl;
-	cout << setw(5)<<setw(19)<<"25108664A"<<setw(30)<<"Lam Chun Hei David"<<setw(19)<<"B02C"<<endl;
-	cout << setw(5)<<setw(19)<<"25131157A"<<setw(30)<<"Leung Ka Yan"<<setw(19)<<"B02A"<<endl;
-	cout << setw(5)<<setw(19)<<"25093449A"<<setw(30)<<"Lui Yik To"<<setw(19)<<"B02C"<<endl;		
-	cout << setw(5)<<setw(19)<<"25106498A"<<setw(30)<<"Zhang Hung Shing"<<setw(19)<<"B02C"<<endl;
+	cout << setw(5)<<" "<<setw(19)<<"25196230A"<<setw(30)<<"Chow Tsz Hin"<<setw(19)<<"B02C"<<endl;
+	cout << setw(5)<<" "<<setw(19)<<"25108664A"<<setw(30)<<"Lam Chun Hei David"<<setw(19)<<"B02C"<<endl;
+	cout << setw(5)<<" "<<setw(19)<<"25131157A"<<setw(30)<<"Leung Ka Yan"<<setw(19)<<"B02A"<<endl;
+	cout << setw(5)<<" "<<setw(19)<<"25093449A"<<setw(30)<<"Lui Yik To"<<setw(19)<<"B02C"<<endl;		
+	cout << setw(5)<<" "<<setw(19)<<"25106498A"<<setw(30)<<"Zhang Hung Shing"<<setw(19)<<"B02C"<<endl;
 	cout << "*************************************************************************"<<endl;
-	cout << setw(16)<<setw(57)<<"Thank You For Using The System! Bye Bye!"<<endl;
+	cout << setw(16)<<" "<<setw(57)<<"Thank You For Using The System! Bye Bye!"<<endl;
 	cout << "*************************************************************************"<<endl;
 	cout<<right;
-	return 6;
+	return 6;//to left loop
 	}
 	else{
 		cout<<right;
-		return 0;
+		return 0;//to go back main meun
 	}
 }
 
@@ -353,7 +405,7 @@ int main() {
         case 4:
             break;
         case 5:
-			gen();
+			gen(members,flights,systemDate);
             break;
         case 6:
 			option=exit_message();
