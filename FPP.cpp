@@ -302,40 +302,50 @@ void gen(vector<Member>& members, vector<FlightRecord>& flights, string systemDa
     cout << setw(17) << "Statement Date: " << setw(47) << systemDate << endl;
     cout << "----------------------------------------------------------------" << endl;
     cout << "Transaction Summary:" << endl;
-    cout << setw(18) << "Type" << setw(12) << "Mileage" << setw(34) << "Description"<<endl;
+    cout << setw(18) << "Type" << setw(12) << "Mileage" << setw(34) << "Description" << endl;
     cout << "Redemption -4000 Gift# 2" << endl; //don't know where to get the record yet
     cout << "----------------------------------------------------------------" << endl;
     cout << "Upcoming Itinerary:" << endl;
     cout << setw(12) << "Origin" << setw(18) << "Destination" << setw(12) << "Flight" << setw(12) << "Cabin" << setw(10) << "Departure" << endl;
-    cout << setw(30) <<" "<< setw(12) << "Number" << setw(12) << "Class" << setw(10) << "Date" << endl;
+    cout << setw(30) << " " << setw(12) << "Number" << setw(12) << "Class" << setw(10) << "Date" << endl;
+    vector<FlightRecord> upcomingFlights;//storing matched flight record
     for (int i = 0; i < flights.size(); i++) {//loop to look all flight record and show if it has same mem num as input
         string s = flights[i].getDepartureDate();//reform the date in yyyymmdd to compare
-        string y = s.substr(6, 4);
-        string m = s.substr(3, 2);
-        string d = s.substr(0, 2);
-        string sy = systemDate.substr(6, 4);
-        string sm = systemDate.substr(3, 2);
-        string sd = systemDate.substr(0, 2);
-        string sdate = sy + sm + sd;
-        string date = y + m + d;
+        string sdate = systemDate.substr(6, 4) + systemDate.substr(3, 2) + systemDate.substr(0, 2);
+        string date = s.substr(6, 4) + s.substr(3, 2) + s.substr(0, 2);
         if (input == flights[i].getMemberNumber() && date > sdate)
-            cout << setw(12) << flights[i].getOrigin() << setw(18) << flights[i].getDestination() << setw(12) << flights[i].getFlightNumber() << setw(12) << flights[i].getCabinClass() << setw(10) << flights[i].getDepartureDate() << endl;
+            upcomingFlights.push_back(flights[i]);
     }
-    cout << "----------------------------------------------------------------" << endl;
-    cout << "Member Account Summary:" << endl;
-    cout << setw(48) << "Total Mileage Points Balance" << ":" << m.getMPM() << endl;
-    cout << setw(48) << "Member Tier" << ":" << m.getMemberTier() << endl;
-    cout << setw(48) << "Bonus Mileage Points" << ":";
-    string bouns = m.getMemberTier();
-    if (bouns == "Green")
-        cout << "0%";
-    else if (bouns == "Silver")
-        cout << "2%";
-    else if (bouns == "Gold")
-        cout << "4%";
-    else if (bouns == "Diamond")
-        cout << "6%";
-    cout << endl;
+    for (int i = 0; i < upcomingFlights.size() - 1; i++) {  //sorting by moving the largest to the end
+        for (int j = 0; j < upcomingFlights.size() - i - 1; j++) {
+            string date1 = upcomingFlights[j].getDepartureDate(); //reform into yyyymmdd to compare
+            string y1 = date1.substr(6, 4) + date1.substr(3, 2) + date1.substr(0, 2);
+            string date2 = upcomingFlights[j + 1].getDepartureDate();
+            string y2 = date2.substr(6, 4) + date2.substr(3, 2) + date2.substr(0, 2);
+            if (y1 > y2) { //swap if font one larger
+                FlightRecord temp = upcomingFlights[j];
+                upcomingFlights[j] = upcomingFlights[j + 1];
+                upcomingFlights[j + 1] = temp;
+            }
+        }
+        for (int i = 0; i < upcomingFlights.size(); i++)
+            cout << setw(12) << upcomingFlights[i].getOrigin() << setw(18) << upcomingFlights[i].getDestination() << setw(12) << upcomingFlights[i].getFlightNumber() << setw(12) << upcomingFlights[i].getCabinClass() << setw(10) << upcomingFlights[i].getDepartureDate() << endl;
+        cout << "----------------------------------------------------------------" << endl;
+        cout << "Member Account Summary:" << endl;
+        cout << setw(48) << "Total Mileage Points Balance" << ":" << m.getMPM() << endl;
+        cout << setw(48) << "Member Tier" << ":" << m.getMemberTier() << endl;
+        cout << setw(48) << "Bonus Mileage Points" << ":";
+        string bouns = m.getMemberTier();
+        if (bouns == "Green")
+            cout << "0%";
+        else if (bouns == "Silver")
+            cout << "2%";
+        else if (bouns == "Gold")
+            cout << "4%";
+        else if (bouns == "Diamond")
+            cout << "6%";
+        cout << endl;
+    }
 }
 
 int exit_message() {
@@ -362,13 +372,12 @@ int exit_message() {
         cout << "*************************************************************************" << endl;
         cout << right;
         return 6;//to left loop
-    }
+    } 
     else {
         cout << right;
         return 0;//to go back main meun
     }
 }
-
 void printMainMenu() {
     cout << "*** FFP Main Menu ***\n";
     cout << "[1] Load Starting Data\n";
