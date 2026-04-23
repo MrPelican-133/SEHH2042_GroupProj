@@ -308,10 +308,20 @@ void gen(vector<Member> &members,vector<FlightRecord> &flights,string systemDate
 	cout<<"Upcoming Itinerary:"<<endl;
 	cout<<stew(12)<<"Origin"<<setw(18)<<"Destination"<<setw(12)<<"Flight"<<setw(12)<<"Cabin"<<setw(10)<<"Departure"<<endl;
 	cout<<stew(30)<<setw(12)<<"Number"<<setw(12)<<"Class"<<setw(10)<<"Date"<<endl;
-	for (int i=0;i<flights.size();i++)//loop to look all flight record and show if it has same mem num as input
-		if(input==flights[i].getMemberNumber)
+	for (int i=0;i<flights.size();i++){//loop to look all flight record and show if it has same mem num as input
+		string s=flights[i].getDepartureDate();//reform the date in yyyymmdd to compare
+		string y=s.substr(6,4);
+		string m=s.substr(3,2);
+		string d=s.substr(0,2);
+		string sy=systemDate.substr(6,4);
+		string sm=systemDate.substr(3,2);
+		string sd=systemDate.substr(0,2);
+		string sdate=sy+sm+sd;
+		string date=y+m+d;
+		if(input==flights[i].getMemberNumber && date>sdate)
 			cout<<stew(12)<<flights[i].getOrigin()<<setw(18)<<flights[i].getDestination()<<setw(12)<<flights[i].getFlightNumber()<<setw(12)<<flights[i].getCabinClass()<<setw(10)<<flights[i].getDepartureDate"<<endl;
-	cout<<"----------------------------------------------------------------"<<endl;
+    }
+    cout<<"----------------------------------------------------------------"<<endl;
 	cout<<"Member Account Summary:"<<endl;
 	cout<<setw(48)<<"Total Mileage Points Balance"<<":"<<m.getMPM()<<endl;
 	cout<<setw(48)<<"Member Tier"<<":"<<m.getMemberTier()<<endl;
