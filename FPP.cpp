@@ -96,7 +96,7 @@ public:
     void setMemberName(string name) {
         memberName = name;
     }
-    void setMPB(int mpb) {
+    void setMPM(int mpb) {
         MPB = mpb;
     }
 
@@ -146,7 +146,7 @@ vector<Member> loadMembers() {
     m1.setPassportNumber("A56677890");
     m1.setMRZ(4);
     m1.setMemberName("WONG Claire");
-    m1.setMPB(45000);
+    m1.setMPM(45000);
     members.push_back(m1);
 
     Member m2;
@@ -155,7 +155,7 @@ vector<Member> loadMembers() {
     m2.setPassportNumber("C78678908");
     m2.setMRZ(5);
     m2.setMemberName("MA Kathy");
-    m2.setMPB(10000);
+    m2.setMPM(10000);
     members.push_back(m2);
 
     Member m3;
@@ -164,7 +164,7 @@ vector<Member> loadMembers() {
     m3.setPassportNumber("E38876890");
     m3.setMRZ(1);
     m3.setMemberName("CHAN Peter");
-    m3.setMPB(53200);
+    m3.setMPM(53200);
     members.push_back(m3);
 
     Member m4;
@@ -173,7 +173,7 @@ vector<Member> loadMembers() {
     m4.setPassportNumber("E38900078");
     m4.setMRZ(7);
     m4.setMemberName("CHEUNG Alice");
-    m4.setMPB(30000);
+    m4.setMPM(30000);
     members.push_back(m4);
 
     cout << "\nStarting data loaded successfully!\n";
@@ -539,7 +539,7 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
                 }
                 newM.setMRZ(total % 10);
                 newM.setMemberTier(tier);
-                newM.setMPB(0);
+                newM.setMPM(0);
 
                 members.push_back(newM);
                 cout << "New member created successfully! Member Number: " << newM.getMemberNumber() << endl;
@@ -1224,7 +1224,7 @@ void gen(vector<Member>& members, vector<FlightRecord>& flights, string systemDa
 
 
 //===========================================R6===================================================//
-int exit_message() {
+int exit_message(bool &run) {
     char confirm;
     string op = "6";
     do {
@@ -1253,7 +1253,8 @@ int exit_message() {
         cout << setw(16) << " " << setw(57) << "Thank You For Using The System! Bye Bye!" << endl;
         cout << "*************************************************************************" << endl;
         cout << right;
-        return 6;//to left loop
+        run = false;
+        return run;//to left loop
     }
     else {
         cout << right;
@@ -1265,10 +1266,19 @@ int exit_message() {
 int main() {
     vector<Member> members;
     vector<FlightRecord> flights;
-    bool dataLoaded = false;        // R1.3 Cheack if the programme run option 1 first or not
+    bool dataLoaded = false;
     string systemDate;
+    // R1.3
+    /*if (!dataLoaded) {
+        cout << "\nError: Please load starting data first (Option 1).\n\n";}
+    else {
+        cout << "\nFeature not implemented yet (R2-R5).\n\n";
+    }*/
+
+
 
     string option;
+    bool run = true;
     do {
         system("cls");
         welcome_message();
@@ -1289,7 +1299,6 @@ int main() {
             else {
                 showAllMemberAccounts(members, flights);
             }
-            break;
         }
         else if (option == "3") {
             if (!dataLoaded) {
@@ -1319,15 +1328,15 @@ int main() {
             }
         }
         else if (option == "6") {
-            option = exit_message();
-            break;
+            option = exit_message(run);
+            
         }
         else {
             cout << "\nInvalid option. Please enter 1-6.\n\n";
             Pauseline();
         }
 
-    } while (true);
+    } while (run);
 
     return 0;
 }
