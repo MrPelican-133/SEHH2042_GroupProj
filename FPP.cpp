@@ -1289,7 +1289,6 @@ int main() {
             else {
                 showAllMemberAccounts(members, flights);
             }
-            break;
         }
         else if (option == "3") {
             if (!dataLoaded) {
