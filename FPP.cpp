@@ -61,6 +61,14 @@ bool isValidDateFormat(const string& date) {
     return true;
 }
 
+bool checkDataLoaded(bool dataloaded) {
+    if (!dataloaded) {
+        cout << "Error: Load starting data first!\n";
+        Pauseline();
+        return false;
+    }
+}
+
 int dateToInteger(string date) {
     // date[0-1] is DD, date[3-4] is MM, date[6-9] is YYYY
     int d = stoi(date.substr(0, 2));
@@ -505,12 +513,13 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
         int retry = 0;
         bool validPassport = false;
         bool nameofr = false;
-        bool isNotValidName = false;
 
         while (retry < 3) {
+            bool isNotValidName = false;
             cout << "\nEnter new Member Name (Surname GivenName)(max 30 chars): ";
-            if (retry > 0 || cin.peek() == '\n') {
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+            if (cin.peek() == '\n') {
+                cin.ignore();
             }
             // Read the full name including spaces
             getline(cin, name);
@@ -523,13 +532,21 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
                     break;
                 }
             }
+            // Locate the first space to identify the surname
+            size_t firstSpace = name.find(' ');
+            if (firstSpace == string::npos) {
+                // Error: No space found (only one name entered)
+                isNotValidName = true;
+            }
+            else if (firstSpace == 0 || firstSpace == name.length() - 1) {
+                // Error: Space is at the very start or very end
+                isNotValidName = true;
+            }
             if (!isNotValidName) {
                 if (name.length() > 30) {
                     name = name.substr(0, 30); // Truncate to 30 characters
                     cout << "System Notice: Name truncated to 30 characters.\n";
                 }
-                // 2. Locate the first space to identify the surname
-                size_t firstSpace = name.find(' ');
 
                 // 3. Format the surname to ALL CAPS
                 // If no space is found, the entire string is treated as the surname
@@ -538,12 +555,18 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
                 for (size_t i = 0; i < endOfSurname; i++) {
                     name[i] = toupper(name[i]);
                 }
+                if (firstSpace != string::npos) {
+                    for (size_t j = firstSpace + 1; j < name.length(); j++) {
+                        name[j] = tolower(name[j]);
+                    }
+                }
             }
   
             cout << "Enter Passport Number: ";
             cin >> passport;
             cout << "Enter Tier (Green/Silver/Gold/Diamond): ";
             cin >> tier;
+            cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             if (passport.length() == 9 && isupper(passport[0])) {
                 validPassport = true;
@@ -557,7 +580,6 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
 
             if ((!isNotValidName)&&(validPassport)&&((tier == "Green") || (tier == "Silver") || (tier == "Gold") || (tier == "Diamond"))) {
                 string yearPrefix = systemDate.substr(6, 4);
-                cout << yearPrefix;
                 // Generate 5 random digits
                 string randomSuffix = to_string(rand() % 90000 + 10000);
                 //Combine them to form the unique Member Number
@@ -616,6 +638,7 @@ void doR4_1(Member& m) {
     string name, passport, tier;
     bool validPassport = false;
     bool tiertrue = false;
+    bool isNotValidName;
     string op = "1";
 
     cout << "\n*** [1] Edit Member Information ***\n";
@@ -623,14 +646,58 @@ void doR4_1(Member& m) {
     cout << "Current Passport Number: " << m.getPassportNumber() << endl;
     cout << "Current Member Tier: " << m.getMemberTier() << endl;
 
-
-    cout << "\nEnter new Member Name (max 30 chars): ";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    getline(cin, name); 
+    do {
+        isNotValidName = false;
+        cout << "\nEnter new Member Name (Surname GivenName)(max 30 chars): ";
+        if (cin.peek() == '\n') {
+            cin.ignore();
+        }
+        getline(cin, name);
+        for (char c : name) {
+            if (!isalpha(c) && !isspace(c)) {
+                isNotValidName = true;
+                break;
+            }
+        }
+        size_t firstSpace = name.find(' ');
+        if (firstSpace == string::npos) {
+            isNotValidName = true;
+        }
+        else if (firstSpace == 0 || firstSpace == name.length() - 1) {
+            isNotValidName = true;
+        }
+        if (isNotValidName == true) {
+            cout << "Invalid format! Name must be string with Surename and Givenname.\n";
+            Pauseline();
+            system("cls");
+            welcome_message();
+            printR4table(m.getMemberNumber(), op);
+            cout << endl;
+            cout << "\n*** [1] Edit Member Information ***\n";
+            cout << "Current Member Name: " << m.getMemberName() << endl;
+            cout << "Current Passport Number: " << m.getPassportNumber() << endl;
+            cout << "Current Member Tier: " << m.getMemberTier() << endl;
+        }
+    } while (isNotValidName);
+    size_t firstSpace = name.find(' ');
     if (name.length() > 30) {
-        name = name.substr(0, 30); // Truncate to 30 characters
+        name = name.substr(0, 30); 
         cout << "System Notice: Name truncated to 30 characters.\n";
     }
+
+    size_t endOfSurname = (firstSpace == string::npos) ? name.length() : firstSpace;
+
+    for (size_t i = 0; i < endOfSurname; i++) {
+        name[i] = toupper(name[i]);
+    }
+    if (firstSpace != string::npos) {
+        for (size_t j = firstSpace + 1; j < name.length(); j++) {
+            name[j] = tolower(name[j]);
+        }
+    }
+    
+
+
     while (!validPassport) {
         cout << "Enter new Passport Number (1 uppercase letter + 8 digits): ";
         cin >> passport;
@@ -656,7 +723,7 @@ void doR4_1(Member& m) {
             cout << "Current Member Name: " << m.getMemberName() << endl;
             cout << "Current Passport Number: " << m.getPassportNumber() << endl;
             cout << "Current Member Tier: " << m.getMemberTier() << endl;
-            cout << "\nEnter new Member Name: ";
+            cout << "\nEnter new Member Name (Surname GivenName)(max 30 chars): ";
             cout << name;
             cout << endl;
         }
@@ -680,7 +747,7 @@ void doR4_1(Member& m) {
             cout << "Current Member Name: " << m.getMemberName() << endl;
             cout << "Current Passport Number: " << m.getPassportNumber() << endl;
             cout << "Current Member Tier: " << m.getMemberTier() << endl;
-            cout << "\nEnter new Member Name: ";
+            cout << "\nEnter new Member Name (Surname GivenName)(max 30 chars): ";
             cout << name;
             cout << endl;
             cout << "Enter new Passport Number (1 uppercase letter + 8 digits): " << passport << endl;
@@ -704,7 +771,7 @@ void doR4_1(Member& m) {
             cout << "Current Member Name: " << m.getMemberName() << endl;
             cout << "Current Passport Number: " << m.getPassportNumber() << endl;
             cout << "Current Member Tier: " << m.getMemberTier() << endl;
-            cout << "\nEnter new Member Name: ";
+            cout << "\nEnter new Member Name (Surname GivenName)(max 30 chars): ";
             cout << name;
             cout << endl;
             cout << "Enter new Passport Number (1 uppercase letter + 8 digits): " << passport << endl;
@@ -752,9 +819,7 @@ void doR4_2(Member& m, vector<FlightRecord>& flights, string systemDate) {
         << setw(15) << "Date" << setw(10) << "-------" << endl;
     cout << "----------------------------------------------------------------------" << endl;
     for (int i = 0; i < flights.size(); i++) {
-        if (flights[i].getMemberNumber() == m.getMemberNumber() &&
-            !flights[i].isUpdated() &&
-            dateToInt(flights[i].getDepartureDate()) < sysDateVal) {
+        if (!flights[i].isUpdated() && dateToInt(flights[i].getDepartureDate()) < sysDateVal) {
 
             foundAny = true;
             cout << left << setw(15) << flights[i].getMemberNumber()
@@ -1042,77 +1107,50 @@ void doR4_4(Member& source, vector<Member>& allMembers, string systemDate) {
         int targetIndex = -1;
         string targetID;
         int amount;
-        bool membertrans = false;
         string op = "4";
 
-        do {
-            cout << "Enter target Member Number: ";
-            cin >> targetID;
+        cout << "Enter target Member Number: ";
+        cin >> targetID;
 
-            // Requirement: Check if the target member account exists in the system
+        // Requirement: Check if the target member account exists in the system
 
-            for (int i = 0; i < allMembers.size(); i++) {
-                if (allMembers[i].getMemberNumber() == targetID) {
-                    // Self-transfer check (to avoid logic errors)
-                    if (allMembers[i].getMemberNumber() == source.getMemberNumber()) {
-                        cout << "Error: You cannot transfer points to your own account.\n";
-                        Pauseline();
-                        system("cls");
-                        welcome_message();
-                        printR4table(source.getMemberNumber(), op);
-                        cout << "\n[1] Redeem Gift\n[2] Transfer Points\nOption: " << subOp;
-                        cout << endl;
-                        break;
-                    }
-                    targetIndex = i;
-                    membertrans = true;
-                    break;
+        for (int i = 0; i < allMembers.size(); i++) {
+            if (allMembers[i].getMemberNumber() == targetID) {
+                // Self-transfer check (to avoid logic errors)
+                if (allMembers[i].getMemberNumber() == source.getMemberNumber()) {
+                    cout << "Error: You cannot transfer points to your own account.\n";
+                    cout << "Operation absorted.\n"; //aborts the operation.
+                    Pauseline();
+                    return;
                 }
-            }
-
-            if (targetIndex == -1 && !membertrans && targetID != source.getMemberNumber()) {
-                cout << "Error: Target member account does not exist.\n"; //
-                Pauseline();
-                system("cls");
-                welcome_message();
-                printR4table(source.getMemberNumber(), op);
-                cout << "\n[1] Redeem Gift\n[2] Transfer Points\nOption: " << subOp;
-                cout << endl;
-
-            }
-        } while (!membertrans);
-
-        do {
-            cout << "Enter amount of mileage points to transfer: ";
-            cin >> amount;
-
-            // Requirement: Transfer mileage point must be positive and not exceed source balance
-            if (amount <= 0) {
-                cout << "Error: Transfer amount must be positive.\n"; //
-                Pauseline();
-                system("cls");
-                welcome_message();
-                printR4table(source.getMemberNumber(), op);
-                cout << "\n[1] Redeem Gift\n[2] Transfer Points\nOption: " << subOp;
-                cout << endl;
-                cout << "Enter target Member Number: " << targetID << endl;
-                
-            }else if (amount > source.getMPB()) {
-                cout << "Error: Insufficient balance (Current balance: " << source.getMPB() << ").\n"; //
-                Pauseline();
-                system("cls");
-                welcome_message();
-                printR4table(source.getMemberNumber(), op);
-                cout << "\n[1] Redeem Gift\n[2] Transfer Points\nOption: " << subOp;
-                cout << endl;
-                cout << "Enter target Member Number: " << targetID << endl;
-                
-            }
-            else
-            {
+                targetIndex = i;
                 break;
             }
-        } while (true);
+        }
+
+        if (targetIndex == -1 && targetID != source.getMemberNumber()) {
+            cout << "Error: Target member account does not exist.\n"; //
+            cout << "Operation absorted.\n"; //aborts the operation.
+            Pauseline();
+            return;
+        }
+
+        cout << "Enter amount of mileage points to transfer: ";
+        cin >> amount;
+
+        // Requirement: Transfer mileage point must be positive and not exceed source balance
+        if (amount <= 0) {
+            cout << "Error: Transfer amount must be positive.\n"; //
+            cout << "Operation absorted.\n"; //aborts the operation.
+            Pauseline();
+            return;
+                
+        }else if (amount > source.getMPB()) {
+            cout << "Error: Insufficient balance (Current balance: " << source.getMPB() << ").\n"; //
+            cout << "Operation absorted.\n"; //aborts the operation.
+            Pauseline();
+            return;
+        }
 
         do {
             // Requirement: Show target member's name and ask for confirmation
@@ -1336,44 +1374,27 @@ int main() {
             dataLoaded = true;
         }
         else if (option == "2") {
-            if (!dataLoaded) {
-                cout << "Error: Load starting data first!\n";
-                Pauseline();
-            }
-            else {
+            if (checkDataLoaded(dataLoaded)) {
                 showAllMemberAccounts(members, flights);
             }
         }
         else if (option == "3") {
-            if (!dataLoaded) {
-                cout << "Error: Load starting data first!\n";
-                Pauseline();
-            }
-            else {
+            if (checkDataLoaded(dataLoaded)) {
                 openOrCloseMemberAccount(members, flights, systemDate);
             }
         }
         else if (option == "4") {
-            if (!dataLoaded) {
-                cout << "Error: Load starting data first!\n";
-                Pauseline();
-            }
-            else {
+            if (checkDataLoaded(dataLoaded)) {
                 memberAccountOperations(members, flights, systemDate);
             }
         }
         else if (option == "5") {
-            if (!dataLoaded) {
-                cout << "Error: Load starting data first!\n";
-                Pauseline();
-            }
-            else {
+            if (checkDataLoaded(dataLoaded)) {
                 gen(members, flights, systemDate);
             }
         }
         else if (option == "6") {
             option = exit_message(run);
-            
         }
         else {
             cout << "\nInvalid option. Please enter 1-6.\n\n";
