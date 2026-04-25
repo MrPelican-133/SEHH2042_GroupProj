@@ -5,6 +5,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <algorithm>
+#include <cctype>   
 using namespace std;
 
 void welcome_message() {
@@ -33,9 +34,13 @@ void printMainMenu(string op) {        // printing the main menu
 }
 
 void Pauseline() {                               // function that assists the clear screen function
+    cin.clear();
+    if (cin.rdbuf()->in_avail() > 0) {
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
     cout << "Press Enter to continue...";        // to stop the program until user presses enter
-    cin.ignore();
-    cin.get();
+    string dummy;
+    getline(cin, dummy);
 }
 
 bool isValidDateFormat(const string& date) {            
@@ -96,7 +101,7 @@ public:
     void setMemberName(string name) {
         memberName = name;
     }
-    void setMPB(int mpb) {
+    void setMPM(int mpb) {
         MPB = mpb;
     }
 
@@ -146,7 +151,7 @@ vector<Member> loadMembers() {
     m1.setPassportNumber("A56677890");
     m1.setMRZ(4);
     m1.setMemberName("WONG Claire");
-    m1.setMPB(45000);
+    m1.setMPM(45000);
     members.push_back(m1);
 
     Member m2;
@@ -155,7 +160,7 @@ vector<Member> loadMembers() {
     m2.setPassportNumber("C78678908");
     m2.setMRZ(5);
     m2.setMemberName("MA Kathy");
-    m2.setMPB(10000);
+    m2.setMPM(10000);
     members.push_back(m2);
 
     Member m3;
@@ -164,7 +169,7 @@ vector<Member> loadMembers() {
     m3.setPassportNumber("E38876890");
     m3.setMRZ(1);
     m3.setMemberName("CHAN Peter");
-    m3.setMPB(53200);
+    m3.setMPM(53200);
     members.push_back(m3);
 
     Member m4;
@@ -173,7 +178,7 @@ vector<Member> loadMembers() {
     m4.setPassportNumber("E38900078");
     m4.setMRZ(7);
     m4.setMemberName("CHEUNG Alice");
-    m4.setMPB(30000);
+    m4.setMPM(30000);
     members.push_back(m4);
 
     cout << "\nStarting data loaded successfully!\n";
@@ -445,7 +450,10 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
 
     if (index != -1) {
         // Close Account
-        cout << "\nMember found: " << members[index].getMemberName() << endl;
+        cout << "\nMember found: " << endl;
+        cout << left << setw(13) << "Member No"<< setw(10) << "Tier"<< setw(15) << "Passport"<< setw(6) << "MRZ"<< setw(35) << "Member Name"<< setw(10) << "Points" << endl;
+        cout << string(85, '-') << endl;
+        cout << left<< setw(13) << members[index].getMemberNumber()<< setw(10) << members[index].getMemberTier()<< setw(15) << members[index].getPassportNumber()<< setw(6) << members[index].getMRZ()<< setw(35) << members[index].getMemberName()<< setw(10) << members[index].getMPB() << endl << endl;
         char confirm;
         do {
             cout << "\nConfirm to CLOSE this account? (Y/N): ";                                                 // both 'Y' and 'y' are accepted to represent 'Yes'
@@ -457,7 +465,10 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
                 welcome_message();
                 printMainMenu(op);
                 cout << "\n\nEnter Member Number: " << memNo << endl;
-                cout << "\nMember found: " << members[index].getMemberName() << endl;
+                cout << "\nMember found: " << endl;
+                cout << left << setw(13) << "Member No" << setw(10) << "Tier" << setw(15) << "Passport" << setw(6) << "MRZ" << setw(35) << "Member Name" << setw(10) << "Points" << endl;
+                cout << string(85, '-') << endl;
+                cout << left << setw(13) << members[index].getMemberNumber() << setw(10) << members[index].getMemberTier() << setw(15) << members[index].getPassportNumber() << setw(6) << members[index].getMRZ() << setw(35) << members[index].getMemberName() << setw(10) << members[index].getMPB() << endl << endl;
             }
         } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
         if (confirm == 'Y' || confirm == 'y') {
@@ -484,6 +495,7 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
         // Open New Account
         cout << "\nMember not found. Opening new account...\n";                                         // jumping to the next page for creating new account
         Pauseline();
+        cin.clear();
         system("cls");
         welcome_message();
         printMainMenu(op);
@@ -493,16 +505,41 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
         int retry = 0;
         bool validPassport = false;
         bool nameofr = false;
+        bool isNotValidName = false;
 
         while (retry < 3) {
-            cout << "\nEnter new Member Name (max 30 chars): ";
+            cout << "\nEnter new Member Name (Surname GivenName)(max 30 chars): ";
+            if (retry > 0 || cin.peek() == '\n') {
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
             // Read the full name including spaces
             getline(cin, name);
             //Optional: Validate length (Requirement: at most 30 characters)
-            if (name.length() > 30) {
-                name = name.substr(0, 30); // Truncate to 30 characters
-                cout << "System Notice: Name truncated to 30 characters.\n";
+            // Check every character in the string
+            for (char c : name) {
+                // If it's not a letter AND not a space, it's "not a standard name string"
+                if (!isalpha(c) && !isspace(c)) {
+                    isNotValidName = true;
+                    break;
+                }
             }
+            if (!isNotValidName) {
+                if (name.length() > 30) {
+                    name = name.substr(0, 30); // Truncate to 30 characters
+                    cout << "System Notice: Name truncated to 30 characters.\n";
+                }
+                // 2. Locate the first space to identify the surname
+                size_t firstSpace = name.find(' ');
+
+                // 3. Format the surname to ALL CAPS
+                // If no space is found, the entire string is treated as the surname
+                size_t endOfSurname = (firstSpace == string::npos) ? name.length() : firstSpace;
+
+                for (size_t i = 0; i < endOfSurname; i++) {
+                    name[i] = toupper(name[i]);
+                }
+            }
+  
             cout << "Enter Passport Number: ";
             cin >> passport;
             cout << "Enter Tier (Green/Silver/Gold/Diamond): ";
@@ -518,7 +555,7 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
                 }
             }
 
-            if ((validPassport)&&((tier == "Green") || (tier == "Silver") || (tier == "Gold") || (tier == "Diamond"))) {
+            if ((!isNotValidName)&&(validPassport)&&((tier == "Green") || (tier == "Silver") || (tier == "Gold") || (tier == "Diamond"))) {
                 string yearPrefix = systemDate.substr(6, 4);
                 cout << yearPrefix;
                 // Generate 5 random digits
@@ -539,7 +576,7 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
                 }
                 newM.setMRZ(total % 10);
                 newM.setMemberTier(tier);
-                newM.setMPB(0);
+                newM.setMPM(0);
 
                 members.push_back(newM);
                 cout << "New member created successfully! Member Number: " << newM.getMemberNumber() << endl;
@@ -557,7 +594,8 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
             }
         }
         cout << "\nToo many invalid attempts. No member added.\n";
-        Pauseline();
+        Pauseline();    
+        cin.clear();
     }
 }
 //===========================================R4 table==============================================//
@@ -958,6 +996,11 @@ void doR4_3(string mNum, vector<FlightRecord>& flights, string systemDate) {
 }
 //===========================================R4.4=================================================//
 void doR4_4(Member& source, vector<Member>& allMembers, string systemDate) {
+    if (source.getMPB() == 0) {
+        cout << "Error: Member account does not have any mileage points.\n"; //
+        Pauseline();
+        return;
+    }
     int subOp;
     cout << "[1] Redeem Gift\n[2] Transfer Points\nOption: ";
     cin >> subOp;
@@ -1224,7 +1267,7 @@ void gen(vector<Member>& members, vector<FlightRecord>& flights, string systemDa
 
 
 //===========================================R6===================================================//
-int exit_message() {
+int exit_message(bool &run) {
     char confirm;
     string op = "6";
     do {
@@ -1253,7 +1296,9 @@ int exit_message() {
         cout << setw(16) << " " << setw(57) << "Thank You For Using The System! Bye Bye!" << endl;
         cout << "*************************************************************************" << endl;
         cout << right;
-        return 6;//to left loop
+        run = false;
+        Pauseline();
+        return run;//to left loop
     }
     else {
         cout << right;
@@ -1265,10 +1310,19 @@ int exit_message() {
 int main() {
     vector<Member> members;
     vector<FlightRecord> flights;
-    bool dataLoaded = false;        // R1.3 Cheack if the programme run option 1 first or not
+    bool dataLoaded = false;
     string systemDate;
+    // R1.3
+    /*if (!dataLoaded) {
+        cout << "\nError: Please load starting data first (Option 1).\n\n";}
+    else {
+        cout << "\nFeature not implemented yet (R2-R5).\n\n";
+    }*/
+
+
 
     string option;
+    bool run = true;
     do {
         system("cls");
         welcome_message();
@@ -1289,7 +1343,6 @@ int main() {
             else {
                 showAllMemberAccounts(members, flights);
             }
-            break;
         }
         else if (option == "3") {
             if (!dataLoaded) {
@@ -1319,15 +1372,15 @@ int main() {
             }
         }
         else if (option == "6") {
-            option = exit_message();
-            break;
+            option = exit_message(run);
+            
         }
         else {
             cout << "\nInvalid option. Please enter 1-6.\n\n";
             Pauseline();
         }
 
-    } while (true);
+    } while (run);
 
     return 0;
 }
