@@ -96,7 +96,7 @@ public:
     void setMemberName(string name) {
         memberName = name;
     }
-    void setMPM(int mpb) {
+    void setMPB(int mpb) {
         MPB = mpb;
     }
 
@@ -146,7 +146,7 @@ vector<Member> loadMembers() {
     m1.setPassportNumber("A56677890");
     m1.setMRZ(4);
     m1.setMemberName("WONG Claire");
-    m1.setMPM(45000);
+    m1.setMPB(45000);
     members.push_back(m1);
 
     Member m2;
@@ -155,7 +155,7 @@ vector<Member> loadMembers() {
     m2.setPassportNumber("C78678908");
     m2.setMRZ(5);
     m2.setMemberName("MA Kathy");
-    m2.setMPM(10000);
+    m2.setMPB(10000);
     members.push_back(m2);
 
     Member m3;
@@ -164,7 +164,7 @@ vector<Member> loadMembers() {
     m3.setPassportNumber("E38876890");
     m3.setMRZ(1);
     m3.setMemberName("CHAN Peter");
-    m3.setMPM(53200);
+    m3.setMPB(53200);
     members.push_back(m3);
 
     Member m4;
@@ -173,7 +173,7 @@ vector<Member> loadMembers() {
     m4.setPassportNumber("E38900078");
     m4.setMRZ(7);
     m4.setMemberName("CHEUNG Alice");
-    m4.setMPM(30000);
+    m4.setMPB(30000);
     members.push_back(m4);
 
     cout << "\nStarting data loaded successfully!\n";
@@ -539,7 +539,7 @@ void openOrCloseMemberAccount(vector<Member>& members, vector<FlightRecord>& fli
                 }
                 newM.setMRZ(total % 10);
                 newM.setMemberTier(tier);
-                newM.setMPM(0);
+                newM.setMPB(0);
 
                 members.push_back(newM);
                 cout << "New member created successfully! Member Number: " << newM.getMemberNumber() << endl;
@@ -1164,16 +1164,8 @@ int exit_message() {
 int main() {
     vector<Member> members;
     vector<FlightRecord> flights;
-    bool dataLoaded = false;
+    bool dataLoaded = false;        // R1.3 Cheack if the programme run option 1 first or not
     string systemDate;
-    // R1.3
-    /*if (!dataLoaded) {
-        cout << "\nError: Please load starting data first (Option 1).\n\n";}
-    else {
-        cout << "\nFeature not implemented yet (R2-R5).\n\n";
-    }*/
-
-
 
     string option;
     do {
