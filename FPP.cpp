@@ -962,7 +962,7 @@ void doR4_4(Member& source, vector<Member>& allMembers, string systemDate) {
     cout << "[1] Redeem Gift\n[2] Transfer Points\nOption: ";
     cin >> subOp;
     int cost;
-    if (subOp == 1) { 
+    if (subOp == 1) {
         string giftNum, giftName;
         bool giftNumtrue = false;
         do {
@@ -982,38 +982,138 @@ void doR4_4(Member& source, vector<Member>& allMembers, string systemDate) {
             }
             else {
                 cout << "Error: Insufficient input.\n";
-                
+
             }
         } while (!giftNumtrue);
 
         if (source.getMPB() >= cost) {
-            source.setMPB(source.getMPB() - cost); 
+            source.setMPB(source.getMPB() - cost);
             source.addRecord(-cost, "Gift# " + giftNum);
             cout << "Redemption successful!\n";
         }
         else {
-            cout << "Error: Insufficient balance.\n"; 
+            cout << "Error: Insufficient balance.\n";
         }
     }
-    else if (subOp == 2) { 
+    else if (subOp == 2) {
+        int targetIndex = -1;
         string targetID;
         int amount;
-        cout << "Enter target Member Number: "; cin >> targetID;
-        cout << "Enter amount: "; cin >> amount;
+        bool membertrans = false;
+        string op = "4";
 
-        for (auto& target : allMembers) {
-            if (target.getMemberNumber() == targetID && amount > 0 && source.getMPB() >= amount) {
-                source.setMPB(source.getMPB() - amount); 
-                target.setMPB(target.getMPB() + amount);
-                source.addRecord(-amount, "Transfer to " + targetID);
-                target.addRecord(amount, "Received from " + source.getMemberNumber());
-                cout << "Transfer to " << target.getMemberName() << " successful!\n";
-                return;
+        do {
+            cout << "Enter target Member Number: ";
+            cin >> targetID;
+
+            // Requirement: Check if the target member account exists in the system
+
+            for (int i = 0; i < allMembers.size(); i++) {
+                if (allMembers[i].getMemberNumber() == targetID) {
+                    // Self-transfer check (to avoid logic errors)
+                    if (allMembers[i].getMemberNumber() == source.getMemberNumber()) {
+                        cout << "Error: You cannot transfer points to your own account.\n";
+                        Pauseline();
+                        system("cls");
+                        welcome_message();
+                        printR4table(source.getMemberNumber(), op);
+                        cout << "\n[1] Redeem Gift\n[2] Transfer Points\nOption: " << subOp;
+                        cout << endl;
+                        break;
+                    }
+                    targetIndex = i;
+                    membertrans = true;
+                    break;
+                }
             }
-        }
-        cout << "Transfer failed (Invalid ID or insufficient points).\n";
+
+            if (targetIndex == -1 && !membertrans && targetID != source.getMemberNumber()) {
+                cout << "Error: Target member account does not exist.\n"; //
+                Pauseline();
+                system("cls");
+                welcome_message();
+                printR4table(source.getMemberNumber(), op);
+                cout << "\n[1] Redeem Gift\n[2] Transfer Points\nOption: " << subOp;
+                cout << endl;
+
+            }
+        } while (!membertrans);
+
+        do {
+            cout << "Enter amount of mileage points to transfer: ";
+            cin >> amount;
+
+            // Requirement: Transfer mileage point must be positive and not exceed source balance
+            if (amount <= 0) {
+                cout << "Error: Transfer amount must be positive.\n"; //
+                Pauseline();
+                system("cls");
+                welcome_message();
+                printR4table(source.getMemberNumber(), op);
+                cout << "\n[1] Redeem Gift\n[2] Transfer Points\nOption: " << subOp;
+                cout << endl;
+                cout << "Enter target Member Number: " << targetID << endl;
+                
+            }else if (amount > source.getMPB()) {
+                cout << "Error: Insufficient balance (Current balance: " << source.getMPB() << ").\n"; //
+                Pauseline();
+                system("cls");
+                welcome_message();
+                printR4table(source.getMemberNumber(), op);
+                cout << "\n[1] Redeem Gift\n[2] Transfer Points\nOption: " << subOp;
+                cout << endl;
+                cout << "Enter target Member Number: " << targetID << endl;
+                
+            }
+            else
+            {
+                break;
+            }
+        } while (true);
+
+        do {
+            // Requirement: Show target member's name and ask for confirmation
+            char confirm;
+            cout << "\nTarget Member: " << allMembers[targetIndex].getMemberName() << endl;
+            cout << "Transfer Amount: " << amount << " points" << endl;
+            cout << "Confirm transfer? (Y/N): ";
+            cin >> confirm;
+
+            if (confirm == 'Y' || confirm == 'y') {
+                // Requirement: Execute transfer by deducting from source and adding to target
+                source.setMPB(source.getMPB() - amount);
+                allMembers[targetIndex].setMPB(allMembers[targetIndex].getMPB() + amount);
+
+                // Record transactions for both parties
+                source.addRecord(-amount, "Transfer to " + targetID);
+                allMembers[targetIndex].addRecord(amount, "Received from " + source.getMemberNumber());
+
+                // Requirement: Show the changes
+                cout << "\n--- Transfer Successful ---\n";
+                cout << "New Balance: " << source.getMPB() << " points\n";
+                Pauseline();
+                break;
+            }
+            else if (confirm == 'N' || confirm == 'n') {
+                cout << "Transfer operation aborted.\n"; //
+                Pauseline();
+                break;
+            }
+            else {
+                cout << "Invalid input. Please enter 'Y' or 'N'.\n";
+                Pauseline();
+                system("cls");
+                welcome_message();
+                printR4table(source.getMemberNumber(), op);
+                cout << "\n[1] Redeem Gift\n[2] Transfer Points\nOption: " << subOp;
+                cout << endl;
+                cout << "Enter target Member Number: " << targetID << endl;
+                cout << "Enter amount of mileage points to transfer: " << amount << endl;
+            }
+        } while (true);
     }
 }
+
 //===========================================R4===================================================//
 void memberAccountOperations(vector<Member>& members, vector<FlightRecord>& flights, string& systemDate) {
     string searchID;
@@ -1066,6 +1166,7 @@ void gen(vector<Member>& members, vector<FlightRecord>& flights, string systemDa
     }
     if (index == -1) {                                                           //error message for not found
         cout << "Such member number is not exist!" << endl;
+        Pauseline();
         return;
     }
     Member m = members[index];                                                   //make new object m and store the mem num record in it
