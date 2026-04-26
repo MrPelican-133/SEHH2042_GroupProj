@@ -1350,14 +1350,6 @@ int main() {
     vector<FlightRecord> flights;
     bool dataLoaded = false;
     string systemDate;
-    // R1.3
-    /*if (!dataLoaded) {
-        cout << "\nError: Please load starting data first (Option 1).\n\n";}
-    else {
-        cout << "\nFeature not implemented yet (R2-R5).\n\n";
-    }*/
-
-
 
     string option;
     bool run = true;
